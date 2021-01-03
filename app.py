@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
 from forms import RegisterForm
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgres:///flask_feedback"
@@ -36,9 +37,17 @@ def register_user():
                         last_name=last_name)
         
         db.session.add(new_user)
-        db.session.commit()
 
+        try:
+            db.session.commit()
+        except IntegrityError:
+            form.username.errors.append('Username taken. Please pick another username.')
+            return render_template('register.html', form=form)
+
+
+        session['user_id'] = new_user.id
         return redirect('/secret')
+
     return render_template('register.html', form=form)
 
 @app.route('/secret')
