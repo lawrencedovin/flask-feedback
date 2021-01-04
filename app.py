@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -30,11 +30,7 @@ def register_user():
         first_name = form.first_name.data
         last_name = form.last_name.data
 
-        new_user = User(username=username, 
-                        password=password, 
-                        email=email, 
-                        first_name=first_name,
-                        last_name=last_name)
+        new_user = User.register(username, password, email, first_name, last_name)
         
         db.session.add(new_user)
 
@@ -45,10 +41,20 @@ def register_user():
             return render_template('register.html', form=form)
 
 
-        session['user_id'] = new_user.id
+        session['username'] = new_user.username
         return redirect('/secret')
 
     return render_template('register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_user():
+
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+    
+
 
 @app.route('/secret')
 def show_secret():
