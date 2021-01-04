@@ -66,4 +66,7 @@ def login_user():
 
 @app.route('/secret')
 def show_secret():
+    if 'username' not in session:
+        flash('Please login first.', 'danger')
+        return redirect('/')
     return render_template('secret.html')
