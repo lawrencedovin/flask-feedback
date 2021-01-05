@@ -65,8 +65,9 @@ def login_user():
 
 @app.route('/logout')
 def logout_user():
-    session.pop('username')
-    flash(f'{username} successfully logged out.', 'info')
+    if 'username' in session:
+        session.pop('username')
+        flash(f'Successfully logged out.', 'info')
     return redirect('/')
 
 # @app.route('/secret')
@@ -124,7 +125,27 @@ def add_feedback(username):
             return redirect(f'/users/{user.username}')
 
         else:
-            return render_template('feedback.html', form=form)
+            return render_template('add_feedback.html', form=form)
     
     flash('Your account cannot access that page.', 'info')
     return redirect('/')
+
+@app.route('/feedback/<int:id>/update', methods=['GET', 'POST'])
+def update_feedback(id):
+    feedback = Feedback.query.get_or_404(id)
+    form = FeedbackForm(obj=feedback)
+
+    if session['username'] == feedback.user.username:
+        if form.validate_on_submit():
+            feedback.title = form.title.data
+            feedback.content = form.content.data
+
+            db.session.commit()
+            flash(f'{feedback.user.username} Successfully Updated Feedback', 'success')
+            return redirect(f'/users/{feedback.user.username}')
+        else:
+            return render_template('edit_feedback.html', form=form)
+
+    flash('Your account cannot access that page.', 'info')
+    return redirect('/')
+        
