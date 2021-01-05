@@ -13,6 +13,18 @@
                 <p class="card-text">
                     {{feedback.content}}
                 </p>
+                <div class="container">
+                    <div class="row">
+                        <form action="/feedback/{{feedback.id}}/update"
+                                method="POST">
+                                <button class="btn btn-sm btn-warning"><i class="fas fa-pencil-alt"></i></button>
+                        </form>
+                        <form action="/feedback/{{feedback.id}}/delete"
+                                method="POST">
+                                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     {% endfor %}
