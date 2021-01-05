@@ -77,3 +77,10 @@ def show_secret():
         flash('Please login first.', 'danger')
         return redirect('/')
     return render_template('secret.html')
+
+@app.route('/users/<username>')
+def show_information(username):
+    if session['username'] == username:
+        user = User.query.filter_by(username=username).first()
+        return render_template('info.html', user=user)
+    return redirect('/')
