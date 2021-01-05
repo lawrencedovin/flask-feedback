@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgres:///flask_feedback"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_ECHO"] = False
 app.config["SECRET_KEY"] = "abc123"
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
@@ -92,9 +92,10 @@ def delete_user(username):
         flash('Please login before continuing.', 'info')
         return ('/login')
 
+    user = User.query.filter_by(username=username).first()
+
     if session['username'] == username:
-        user = User.query.filter_by(username=username).first()
-        db.session.delete('username')
+        db.session.delete(user)
         db.session.commit()
         flash(f'{username} has deleted their account.', 'success')
         return redirect('/')
