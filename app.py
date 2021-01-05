@@ -65,9 +65,8 @@ def login_user():
 
 @app.route('/logout')
 def logout_user():
-    if 'username' in session:
-        session.pop('username')
-        flash('User successfully logged out.', 'info')
+    session.pop('username')
+    flash('User successfully logged out.', 'info')
     return redirect('/')
 
 
@@ -80,7 +79,26 @@ def show_secret():
 
 @app.route('/users/<username>')
 def show_information(username):
+    if 'username' not in session:
+        flash('Please login before continuing.', 'danger')
+        return redirect('/login')
     if session['username'] == username:
         user = User.query.filter_by(username=username).first()
         return render_template('info.html', user=user)
+    return redirect('/')
+
+@app.route('/users/<username>/delete', methods=['POST'])
+def delete_user(username):
+    if 'username' not in session:
+        flash('Please login before continuing.', 'info')
+        return ('/login')
+
+    if session['username'] == username:
+        user = User.query.filter_by(username=username).first()
+        db.session.delete('username')
+        db.session.commit()
+        flash(f'{username} has deleted their account.', 'success')
+        return redirect('/')
+    
+    flash('Your account does not have permission to do that.', 'info')
     return redirect('/')
