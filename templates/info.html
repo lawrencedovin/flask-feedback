@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Secret Page{% endblock %}
+{% block title %}{{user.username}} Page{% endblock %}
 {% block content %}
 <h1>I'm info page</h1>
 <div>
@@ -28,5 +28,11 @@
             </div>
         </div>
     {% endfor %}
+</div>
+<div class="container">
+    <div class="row">
+        <a class="btn btn-sm btn-success" href="/users/{{user.username}}/feedback/add">Add Feedback</a>
+        <a class="btn btn-sm btn-danger" href="/users/{{user.username}}/delete">Delete User</a>
+    </div>
 </div>
 {% endblock %}
