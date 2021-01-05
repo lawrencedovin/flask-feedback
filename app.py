@@ -66,9 +66,8 @@ def login_user():
 @app.route('/logout')
 def logout_user():
     session.pop('username')
-    flash('User successfully logged out.', 'info')
+    flash(f'{username} successfully logged out.', 'info')
     return redirect('/')
-
 
 @app.route('/secret')
 def show_secret():
