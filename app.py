@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Feedback
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, FeedbackForm
 from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
@@ -101,4 +101,30 @@ def delete_user(username):
         return redirect('/')
     
     flash('Your account does not have permission to do that.', 'info')
+    return redirect('/')
+
+@app.route('/users/<username>/feedback/add', methods=['GET', 'POST'])
+def add_feedback(username):
+    if 'username' not in session:
+        flash('Please login before continuing.', 'info')
+        return ('/login')
+
+    if session['username'] == username:
+        form = FeedbackForm()
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+            user = User.query.get(session['username'])
+
+            feedback = Feedback(title=title, content=content, username=user.username)
+            db.session.add(feedback)
+            db.session.commit()
+            
+            flash(f'{user.username} Successfully Created Feedback', 'success')
+            return redirect(f'/users/{user.username}')
+
+        else:
+            return render_template('feedback.html', form=form)
+    
+    flash('Your account cannot access that page.', 'info')
     return redirect('/')
