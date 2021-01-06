@@ -148,3 +148,17 @@ def update_feedback(id):
 
     flash('Your account cannot access that page.', 'info')
     return redirect('/')
+
+@app.route('/feedback/<int:id>/delete', methods=['POST'])
+def delete_feedback(id):
+    feedback = Feedback.query.get_or_404(id)
+    form = FeedbackForm()
+
+    if session['username'] == feedback.user.username:
+        db.session.delete(feedback)
+        db.session.commit()
+        flash(f'{feedback.user.username} Successfully Deleted Feedback', 'success')
+        return redirect(f'/users/{feedback.user.username}')
+
+    flash('Your account cannot access that page.', 'info')
+    return redirect('/')
