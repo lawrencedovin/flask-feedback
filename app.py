@@ -148,4 +148,3 @@ def update_feedback(id):
 
     flash('Your account cannot access that page.', 'info')
     return redirect('/')
-        
