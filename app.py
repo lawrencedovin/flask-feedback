@@ -17,6 +17,8 @@ toolbar = DebugToolbarExtension(app)
 
 @app.route('/')
 def home_page():
+    if 'username' in session:
+        return redirect(f"/users/{session['username']}")
     return redirect('/register')
 
 @app.route('/register', methods=['GET', 'POST'])
