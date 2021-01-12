@@ -46,7 +46,7 @@ def register_user():
 
 
         session['username'] = new_user.username
-        return redirect('/secret')
+        return redirect('/')
 
     return render_template('register.html', form=form)
 
